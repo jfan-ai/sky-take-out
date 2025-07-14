@@ -65,9 +65,15 @@ import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.service.EmployeeService;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     /**
@@ -95,9 +101,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
         /**
+         * md5加密password
          * 密码比对
          * 若不对则抛出异常MessageConstant.PASSWORD_ERROR
          */
+         password = DigestUtils.md5Hex(password.getBytes());
+         log.info("加密后的密码为：{}",password);
         if(!password.equals(employee.getPassword())){
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
