@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel(description = "员工新增是传递的数据模型")
+@ApiModel(description = "员工新增传递的数据模型")
 public class EmployeeDTO implements Serializable {
     @ApiModelProperty("员工id")
     private Long id;

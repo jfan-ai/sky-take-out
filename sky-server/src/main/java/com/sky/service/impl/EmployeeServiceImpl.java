@@ -57,16 +57,20 @@ package com.sky.service.impl;
 //
 //}
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Slf4j
@@ -145,5 +150,23 @@ public class EmployeeServiceImpl implements EmployeeService {
          * 调用mapper插入
          */
         employeeMapper.insert(employee);
+    }
+
+    @Override
+    public PageResult page(EmployeePageQueryDTO employeePageQueryDTO) {
+        /**
+         * 使用pageHelper分页插件 设置当前页码和每页显示条数
+         */
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        /**
+         * 调用mapper分页查询 返回Page<Employee>对象
+         */
+        Page<Employee> page = employeeMapper.page(employeePageQueryDTO);
+        /**
+         * 获取page的结果
+         */
+        long total = page.getTotal();
+        List<Employee> list = page.getResult();
+        return new PageResult(total, list);
     }
 }
