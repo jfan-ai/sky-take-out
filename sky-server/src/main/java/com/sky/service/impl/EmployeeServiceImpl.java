@@ -58,6 +58,9 @@ package com.sky.service.impl;
 //}
 
 import com.sky.constant.MessageConstant;
+import com.sky.constant.PasswordConstant;
+import com.sky.context.BaseContext;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
@@ -68,9 +71,11 @@ import com.sky.service.EmployeeService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 
 
 @Slf4j
@@ -118,5 +123,27 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
         return employee;
+    }
+
+    @Override
+    public void save(EmployeeDTO employeeDTO) {
+        /**
+         * 创建一个employee实体 用来拷贝数据
+         */
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        /**
+         * 补充dto没有的属性 状态 密码 创建时间 修改时间 创建人id 更改人id
+         */
+        employee.setStatus(1);
+        employee.setPassword(DigestUtils.md5Hex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        /**
+         * 调用mapper插入
+         */
+        employeeMapper.insert(employee);
     }
 }
