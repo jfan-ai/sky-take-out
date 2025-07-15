@@ -65,9 +65,11 @@ import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.EmployeeUpdatePasswordDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
+import com.sky.exception.LoginFailedException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
@@ -193,4 +195,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getById(Long id) {
         return employeeMapper.getById(id);
     }
+
+    @Override
+    public void editPassword(EmployeeUpdatePasswordDTO employeeUpdatePasswordDTO) {
+        /**
+         * 根据id查询员工信息
+         * 判断原密码是否正确
+         * 不正确抛出自定义异常
+         * 修改密码
+         */
+        Employee employee = employeeMapper.getById(Long.valueOf(employeeUpdatePasswordDTO.getEmpId()));
+        /**
+         * 密码进行md5加密
+         */
+        String oldPassword = DigestUtils.md5Hex(employeeUpdatePasswordDTO.getOldPassword().getBytes());
+        String newPassword = DigestUtils.md5Hex(employeeUpdatePasswordDTO.getNewPassword().getBytes());
+        log.info("员工修改密码：{}", employeeUpdatePasswordDTO);
+        log.info("员工修改旧密码：{}", oldPassword);
+        if (!employee.getPassword().equals(oldPassword) ){
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        }else{
+            employee.setPassword(newPassword);
+            employeeMapper.update(employee);
+        }
+    }
+
+
 }
