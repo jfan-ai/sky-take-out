@@ -1,6 +1,14 @@
-**/target/
-.idea
-*.iml
+# === 编译输出 & 构建目录 ===
+target/
 *.class
+
+# === IDE 相关 ===
+.idea/
+*.iml
+
+# === 测试代码 ===
 *Test.java
 **/test/
+
+# === 环境配置：排除 application-dev.yml ===
+**/application-dev.yml
