@@ -123,6 +123,7 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public Result<Employee> getById(@PathVariable Long id){
         Employee employee =  employeeService.getById(id);
+
         return Result.success(employee);
     }
 }
