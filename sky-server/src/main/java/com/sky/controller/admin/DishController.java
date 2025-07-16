@@ -75,4 +75,26 @@ public class DishController {
         dishService.updateWithFlavor(dishDTO);
         return Result.success();
     }
+
+    /**
+     * 菜品起售停售
+     */
+    @ApiOperation("菜品起售停售")
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("菜品起售停售：{}", status, id);
+        dishService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据分类id查询菜品选项
+     */
+    @ApiOperation("根据分类id查询菜品选项")
+    @GetMapping("/list")
+    public Result<List<DishVO>> list(Long categoryId){
+        log.info("根据分类id查询菜品选项：{}", categoryId);
+        List<DishVO> list = dishService.list(categoryId);
+        return Result.success(list);
+    }
 }
