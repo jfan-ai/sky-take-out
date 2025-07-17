@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.List;
 public class DishController {
     @Autowired
     private DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 新增菜品
      */
@@ -29,6 +32,7 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+        cleanCache("dish_" + dishDTO.getCategoryId());
         return Result.success();
     }
 
@@ -51,6 +55,8 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids){
         log.info("菜品批量删除：{}", ids);
         dishService.delete(ids);
+        //删除全部缓存
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -73,6 +79,8 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        //删除全部缓存
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -84,6 +92,7 @@ public class DishController {
     public Result startOrStop(@PathVariable Integer status, Long id){
         log.info("菜品起售停售：{}", status, id);
         dishService.startOrStop(status, id);
+        cleanCache("dish_*");
         return Result.success();
     }
 
@@ -96,5 +105,14 @@ public class DishController {
         log.info("根据分类id查询菜品选项：{}", categoryId);
         List<DishVO> list = dishService.list(categoryId);
         return Result.success(list);
+    }
+
+    /**
+     * 清理缓存
+     * @param key
+     */
+    private void cleanCache(String key){
+        log.info("清理缓存：{}", key);
+        redisTemplate.delete(key);
     }
 }
