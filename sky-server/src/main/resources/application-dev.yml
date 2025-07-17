@@ -11,6 +11,11 @@ sky:
     access-key-id: ${OSS_ACCESS_KEY_ID}
     access-key-secret: ${OSS_ACCESS_KEY_SECRET}
     bucket-name: sky-wszfl
+
+
+  wechat:
+    appid: wx0e304adede127b1c
+    secret: 4f6045dcf279ff09da2fda9260abdd6f
   redis:
     host: 192.168.1.144
     port: 6379
