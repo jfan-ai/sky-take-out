@@ -10,6 +10,7 @@ import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,21 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public void delete(List<Long> ids) {
+
+        for(Long id : ids){
+            setmealMapper.deleteSetmealDishBySetmealId(id);
+        }
         setmealMapper.delete(ids);
+
+    }
+
+    @Override
+    public List<Setmeal> list(Setmeal setmeal) {
+        return setmealMapper.list(setmeal);
+    }
+
+    @Override
+    public List<DishItemVO> getDishItemBySetmealId(Long id) {
+        return setmealMapper.getDishItemBySetmealId(id);
     }
 }
